@@ -2,54 +2,75 @@ import themidibus.*;
 
 MidiBus myBus;
 
- float theta;
- float hoek;
-void setup(){
- size(displayWidth, displayHeight); 
- background(0);
- 
-MidiBus.list();
+float theta;
+float theta1;
+float theta2;
+
+float hoek;
+float hoek1;
+float hoek2;
+
+
+float grote;
+float grote1;
+float grote2;
+
+void setup() {
+  size(displayWidth, displayHeight); 
+  background(0);
+
+  MidiBus.list();
   myBus = new MidiBus(this, 0, 1); // sketch, input, output
 }
 
-void draw(){
+void draw() {
 
   background(0);
   frameRate(30);
   stroke(255);
-  // Let's pick an angle 0 to 90 degrees based on the mouse position
+
   float a = hoek;
-  // Convert it to radians
+  float b = hoek1;
+  float c = hoek2;
+
   theta = radians(a);
-  // Start the tree from the bottom of the screen
+  theta1 = radians(b);
+  theta2 = radians(c);
+
+  pushMatrix();
   translate(width/2, 1000);
-  // Draw a line 120 pixels
-  line(0,0,0,-120);
-  // Move to the end of that line
-  translate(0,-120);
-  // Start the recursive branching!
-  branch(400);
- 
- 
- 
+  line(0, 0, 0, 0);
+  translate(0, 0);
+  branch(grote);
+  popMatrix();
+
+  pushMatrix();
+  translate(width/4, 1000);
+  line(0, 0, 0, 0);
+  translate(0, 0);
+  branch1(grote1);
+  popMatrix();
+
+  pushMatrix();
+  translate(width/4 * 3, 1000);
+  line(0, 0, 0, 0);
+  translate(0, 0);
+  branch2(grote2);
+  popMatrix();
 }
 
 
 void branch(float h) {
-  // Each branch will be 2/3rds the size of the previous one
   h *= 0.66;
-  
-  // All recursive functions must have an exit condition!!!!
-  // Here, ours is when the length of the branch is 2 pixels or less
+
   if (h > 2) {
-    pushMatrix();    // Save the current state of transformation (i.e. where are we now)
-    rotate(theta);   // Rotate by theta
-    line(0, 0, 0, -h);  // Draw the branch
-    translate(0, -h); // Move to the end of the branch
-    branch(h);       // Ok, now call myself to draw two new branches!!
-    popMatrix();     // Whenever we get back here, we "pop" in order to restore the previous matrix state
-    
-    // Repeat the same thing, only branch off to the "left" this time!
+    pushMatrix();   
+    rotate(theta);   
+    line(0, 0, 0, -h);  
+    translate(0, -h); 
+    branch(h);       
+    popMatrix();    
+
     pushMatrix();
     rotate(-theta);
     line(0, 0, 0, -h);
@@ -59,21 +80,67 @@ void branch(float h) {
   }
 }
 
+void branch1(float h1) {
+  h1 *= 0.66;
+
+  if (h1 > 2) {
+    pushMatrix();    
+    rotate(theta1);   
+    line(0, 0, 0, -h1);  
+    translate(0, -h1); 
+    branch1(h1);      
+    popMatrix();     
+
+    pushMatrix();
+    rotate(-theta1);
+    line(0, 0, 0, -h1);
+    translate(0, -h1);
+    branch1(h1);
+    popMatrix();
+  }
+}
+
+void branch2(float h2) {
+  h2 *= 0.66;
+
+  if (h2 > 2) {
+    pushMatrix();    
+    rotate(theta2);  
+    line(0, 0, 0, -h2); 
+    translate(0, -h2); 
+    branch2(h2);      
+    popMatrix();    
+
+    pushMatrix();
+    rotate(-theta2);
+    line(0, 0, 0, -h2);
+    translate(0, -h2);
+    branch2(h2);
+    popMatrix();
+  }
+}
+
 
 void controllerChange(int channel, int controllerID, int controllerValue) {
-  // Receive a controllerChange
   println();
   println("Controller Change:");
   println("--------");
   println("Channel:"+channel);
   println("controllerID:"+controllerID);
   println("controllerValue:"+controllerValue);
-  
-  if (controllerID == 10) {
-    // It's the first controller
+
+  if (controllerID == 74) {
     hoek = controllerValue ;
-  //} else if (controllerID == 74) {
-  //  // It's the second controller
-  //  ellipseSize = controllerValue * 10;
+    grote = controllerValue * 15;
+  }
+
+  if (controllerID == 10) {
+    hoek1 = controllerValue ;
+    grote1 = controllerValue * 15;
+  }
+
+  if (controllerID == 71) {
+    hoek2 = controllerValue ;
+    grote2 = controllerValue * 15;
   }
 }
